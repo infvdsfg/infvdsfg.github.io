@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>文章归档 | Gridea</title>
+<title>MySQL建表时发生1063错误总结 | Gridea</title>
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
@@ -18,7 +18,13 @@
 
 
 
-    <meta name="description" content="温故而知新">
+    <meta name="description" content="问题描述
+建立表格时，发生erro1063。
+字符集使用UTF-8
+此时表中多个字段被设置为varchar（255）
+问题解决
+首先百度error1063，发现问题不匹配。百度结果中error1063通常为自增字段未设置为int类型或非空字..." />
+    <meta name="keywords" content="" />
   </head>
   <body>
     <div id="app" class="main">
@@ -88,47 +94,43 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          
+          <div class="post-detail">
+            <h2 class="post-title">MySQL建表时发生1063错误总结</h2>
+            <div class="post-date">2022-02-22</div>
+            
+            <div class="post-content" v-pre>
+              <h2 id="问题描述">问题描述</h2>
+<p>建立表格时，发生erro1063。<br>
+字符集使用UTF-8<br>
+此时表中多个字段被设置为varchar（255）</p>
+<h2 id="问题解决">问题解决</h2>
+<p>首先百度error1063，发现问题不匹配。百度结果中error1063通常为自增字段未设置为int类型或非空字段未设置默认值。在改动每个varchar（255）字段长度为20后问题解决。</p>
+<h2 id="原理">原理</h2>
+<p>在进行CURD时，所有中间结果都会被存入内存表中。而内存表会按照固定长度来保存。 在UTF-8中，对于varvhar(255)，每行所占字节为2byte+3*255byte=767byte。</p>
+<ol>
+<li>varchar 字段是将实际内容单独存储在聚簇索引之外，实际存储从第二个字节开始，接着要用1到2个字节表示实际长度（长度超过255时需要2个字节），因此最大长度不能超过65535。</li>
+<li>字符类型若为gbk，每个字符最多占2个字节，最大长度不能超过32766;<br>
+字符类型若为utf8，每个字符最多占3个字节，最大长度不能超过21845。<br>
+若定义的时候超过上述限制，则varchar字段会被强行转为text类型，并产生warning。</li>
+<li>导致实际应用中varchar长度限制的是一个行定义的长度。 MySQL要求一个行的定义长度不能超过65535。若定义的表长度超过这个值，则提示error1118</li>
+</ol>
 
-          <h2 class="archives-title">文章归档</h2>
-          <div class="archives-container">
+            </div>
             
-              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2022</h2>
-              
-                
-                  <article class="post">
-                    <a href="https://infvdsfg.github.io/post/mysql-jian-biao-shi-fa-sheng-1063-cuo-wu-zong-jie/">
-                      <h2 class="post-title">
-                        MySQL建表时发生1063错误总结
-                      </h2>
-                    </a>
-                  </article>
-                
-              
-                
-              
             
-              <h2 class="year" data-aos="fade-in" data-aos-delay="500">2018</h2>
-              
-                
-              
-                
-                  <article class="post">
-                    <a href="https://infvdsfg.github.io/post/hello-gridea/">
-                      <h2 class="post-title">
-                        Hello Gridea
-                      </h2>
-                    </a>
-                  </article>
-                
-              
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://infvdsfg.github.io/post/hello-gridea/">
+                  <h3 class="post-title">
+                    Hello Gridea
+                  </h3>
+                </a>
+              </div>
             
+
+            
+
           </div>
-
-          <div class="pagination-container">
-  
-  
-</div>
 
         </div>
       </div>

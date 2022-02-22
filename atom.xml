@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://infvdsfg.github.io</id>
     <title>Gridea</title>
-    <updated>2022-02-22T03:36:43.530Z</updated>
+    <updated>2022-02-22T06:53:29.123Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://infvdsfg.github.io"/>
     <link rel="self" href="https://infvdsfg.github.io/atom.xml"/>
@@ -10,6 +10,29 @@
     <logo>https://infvdsfg.github.io/images/avatar.png</logo>
     <icon>https://infvdsfg.github.io/favicon.ico</icon>
     <rights>All rights reserved 2022, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[MySQL建表时发生1063错误总结]]></title>
+        <id>https://infvdsfg.github.io/post/mysql-jian-biao-shi-fa-sheng-1063-cuo-wu-zong-jie/</id>
+        <link href="https://infvdsfg.github.io/post/mysql-jian-biao-shi-fa-sheng-1063-cuo-wu-zong-jie/">
+        </link>
+        <updated>2022-02-22T03:45:36.000Z</updated>
+        <content type="html"><![CDATA[<h2 id="问题描述">问题描述</h2>
+<p>建立表格时，发生erro1063。<br>
+字符集使用UTF-8<br>
+此时表中多个字段被设置为varchar（255）</p>
+<h2 id="问题解决">问题解决</h2>
+<p>首先百度error1063，发现问题不匹配。百度结果中error1063通常为自增字段未设置为int类型或非空字段未设置默认值。在改动每个varchar（255）字段长度为20后问题解决。</p>
+<h2 id="原理">原理</h2>
+<p>在进行CURD时，所有中间结果都会被存入内存表中。而内存表会按照固定长度来保存。 在UTF-8中，对于varvhar(255)，每行所占字节为2byte+3*255byte=767byte。</p>
+<ol>
+<li>varchar 字段是将实际内容单独存储在聚簇索引之外，实际存储从第二个字节开始，接着要用1到2个字节表示实际长度（长度超过255时需要2个字节），因此最大长度不能超过65535。</li>
+<li>字符类型若为gbk，每个字符最多占2个字节，最大长度不能超过32766;<br>
+字符类型若为utf8，每个字符最多占3个字节，最大长度不能超过21845。<br>
+若定义的时候超过上述限制，则varchar字段会被强行转为text类型，并产生warning。</li>
+<li>导致实际应用中varchar长度限制的是一个行定义的长度。 MySQL要求一个行的定义长度不能超过65535。若定义的表长度超过这个值，则提示error1118</li>
+</ol>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Hello Gridea]]></title>
         <id>https://infvdsfg.github.io/post/hello-gridea/</id>
