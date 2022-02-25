@@ -1,15 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://infvdsfg.github.io</id>
-    <title>Gridea</title>
-    <updated>2022-02-22T07:43:01.369Z</updated>
+    <title>今天学了吗</title>
+    <updated>2022-02-25T07:58:38.239Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://infvdsfg.github.io"/>
     <link rel="self" href="https://infvdsfg.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
     <logo>https://infvdsfg.github.io/images/avatar.png</logo>
     <icon>https://infvdsfg.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2022, Gridea</rights>
+    <rights>All rights reserved 2022, 今天学了吗</rights>
+    <entry>
+        <title type="html"><![CDATA[Dfinity共识机制]]></title>
+        <id>https://infvdsfg.github.io/post/dfinity-gong-shi-ji-zhi/</id>
+        <link href="https://infvdsfg.github.io/post/dfinity-gong-shi-ji-zhi/">
+        </link>
+        <updated>2022-02-25T07:38:26.000Z</updated>
+        <content type="html"><![CDATA[<p>Q:假设在r-1 round 如何识别block是否合法？（是否是attatcker 提出的）<br>
+A: (1)prv B = H(B') and rd B' = rd B-1<br>
+(2) nt B is notarization of B'<br>
+(3) dat B is valid</p>
+<p>Q:如何防止不合法的block被公正<br>
+A:有无上一轮的区块公证,Notarization. Only timely published block proposals can get notarized. Only notarizations that are timely published within 1 round can get referenced.</p>
+<p>Q: 公证的意义<br>
+A: 从上一个问题可以看出：只有及时发布的块才能被签名，只有签名的区块才能获得公证。这意味着，只有在一轮内及时公布的公证书才能被引用。 这样防止攻击者私留块并建造链进行双花攻击。</p>
+<p>Q: 如何防止身份攻击？<br>
+A: 在layer 1 中，每个client都需要identity，在进入Dfinity时需要质押一定的押金，增加了作恶成本。（一定程度上可以防范女巫攻击）</p>
+<p>Q:正常时如何工作<br>
+A:DFINITY的共识是按照轮为单位进行的，每一轮产出本轮的一个区块，一轮的时间为区块时间，轮次等于区块高度。<br>
+step1 选择本轮委员会组<br>
+· 系统（VRF）根据R-1轮次生成的随机数ξR，在已有的阀值组中随机的选择R轮的委员会。<br>
+step2 提案委员会打包出块<br>
+· 选出的委员会提案组先收集用户发送的交易，检验合法后进行打包，出块与常见区块链项目一致。<br>
+step3 公证委员会持续接收并验证区块<br>
+· 接受区块：持续的接受提案组产出的区块，直到观测到下一个随机数ξR+1的产生。<br>
+· 检验合法：接受区块后首先检验是由合法有效<br>
+r if rd B = r and there is a valid block B’ such that<br>
+(1) prv B = H(B’) and rd B0 = rd B - 1,<br>
+(2) nt B is a notarization of B’<br>
+(3) dat(data payload) B is valid.（有无引用R-1区块的公证），不合法就丢弃。<br>
+· 计算优先级：运行“概率插槽协议”(PSP)，计算连续两个区块的权重，这是根据由随机数得出的区块权重得出的。<br>
+· 签名并广播：如果上一步中区块权重高于上一个接收到的，签名并广播；否则就丢弃区块。<br>
+step4 随机数信标收集签名<br>
+· 随机数信标持续的收集公证者广播的签名部分，并记录数目。<br>
+等待阀值，产出公证与随机数<br>
+· 一但对单个区块，接受了超过50%公证者的签名，马上聚合签名，产出公证Zr（本质是时间戳）并写入区块广播。<br>
+· 同时产生根据这些签名产生随机数ξR+1，广播。<br>
+R+1 step0 同步正确区块，R+1轮开始，回到strp1<br>
+· 此时广播传播全网，R轮委员会全部停止工作，节点开始同步被公证的区块。<br>
+· 根据随机数ξR+1选择R+1轮的委员会组。</p>
+]]></content>
+    </entry>
+    <entry>
+        <title type="html"><![CDATA[数组]]></title>
+        <id>https://infvdsfg.github.io/post/shu-zu/</id>
+        <link href="https://infvdsfg.github.io/post/shu-zu/">
+        </link>
+        <updated>2022-02-25T06:56:06.000Z</updated>
+        <content type="html"><![CDATA[<p>数组是存放在<strong>连续</strong>内存空间上的<strong>相同类型</strong> 数据集合。<br>
+（数组在C++中储存是连续的，在Java中由于没有指针，寻址操作交给虚拟机，未知是否连续。由于使用new关键字创建实例，会在堆上分配内存空间，然后返回对象的引用。）</p>
+<ul>
+<li>数组下标都从0开始</li>
+<li>声明并创建数组：
+<ul>
+<li>数据类型[] 数组名称 = new 数组类型[数组长度]</li>
+</ul>
+</li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[MySQL建表时发生1063错误总结]]></title>
         <id>https://infvdsfg.github.io/post/mysql-jian-biao-shi-fa-sheng-1063-cuo-wu-zong-jie/</id>
